@@ -36,8 +36,9 @@ public class IdMappingMR3 {
 		@Override
 		public void reduce(Text key,Iterable<IDs> values,Context context) throws IOException,InterruptedException {
 			IDs ids = new IDs();
+			IdMappingUtil.initIDs(ids);
 			for (IDs tmpIDs : values ) {
-				ids.updateIDs(tmpIDs);
+				IdMappingUtil.mergeIDs(tmpIDs, ids);
 			}
 			String tempGlobalId = IdMappingUtil.getGlobalId(ids);
 			ids.setGlobalId(tempGlobalId);

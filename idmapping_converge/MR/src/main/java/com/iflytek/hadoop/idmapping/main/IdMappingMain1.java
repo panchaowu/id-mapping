@@ -85,8 +85,7 @@ public class IdMappingMain1 implements Tool {
 					AvroKeyInputFormat.class);
 		    }
 		}
-		job.waitForCompletion(true);
-		return 0;
+		return job.waitForCompletion(true)==true?0:1;
 	}
 
 	@Override

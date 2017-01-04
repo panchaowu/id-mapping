@@ -170,4 +170,52 @@ public class IdMappingUtil {
 			return null;
 		}
 	}
+
+	public synchronized static void updateItem(Map<String,Integer> srcMap,Map<String,Integer> dstMap) {
+		for(String key : srcMap.keySet()) {
+			if(dstMap.containsKey(key) == false || dstMap.get(key) > srcMap.get(key)) {
+				dstMap.put(key,srcMap.get(key));
+			}
+		}
+	}
+
+	// 更新outputIds设备字段的activity字段，如果不存在，直接插入
+	public synchronized static void mergeIDs(IDs inputIds,IDs outputIds)  {
+		//imei
+		if(inputIds.getImei() != null) {
+			updateItem(inputIds.getImei(),outputIds.getImei());
+		}
+		//mac
+		if(inputIds.getMac() != null) {
+			updateItem(inputIds.getMac(),outputIds.getMac());
+		}
+		//imsi
+		if(inputIds.getImsi() != null) {
+			updateItem(inputIds.getImsi(),outputIds.getImsi());
+		}
+		//phone
+		if(inputIds.getPhoneNumber() != null) {
+			updateItem(inputIds.getPhoneNumber(),outputIds.getPhoneNumber());
+		}
+		//openudid
+		if(inputIds.getOpenudid() != null) {
+			updateItem(inputIds.getOpenudid(),outputIds.getOpenudid());
+		}
+		//idfa
+		if(inputIds.getIdfa() != null) {
+			updateItem(inputIds.getIdfa(),outputIds.getIdfa());
+		}
+		//android
+		if(inputIds.getAndroidId() != null) {
+			updateItem(inputIds.getAndroidId(),outputIds.getAndroidId());
+		}
+		//uid
+		if(inputIds.getUid() != null) {
+			updateItem(inputIds.getUid(),outputIds.getUid());
+		}
+		//did
+		if(inputIds.getDid() != null) {
+			updateItem(inputIds.getDid(),outputIds.getDid());
+		}
+	}
 }
