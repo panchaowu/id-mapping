@@ -19,9 +19,9 @@ public class IdMappingMR2 {
 		public void map(AvroKey<IDs> key,NullWritable value,Context context) throws IOException,InterruptedException {
 			 String secondKey = key.datum().getGlobalId();
 			 // current ID's map is null or don't merge in step I
-			 if (secondKey.length() == 0) {
-			 	secondKey = IdMappingUtil.Random + "_" +IdMappingUtil.getRandomString(context.getTaskAttemptID().toString(), context.getNumReduceTasks());
-			 }
+//			 if (secondKey.length() == 0) {
+//			 	secondKey = IdMappingUtil.Random + "_" +IdMappingUtil.getRandomString(context.getTaskAttemptID().toString(), context.getNumReduceTasks());
+//			 }
 			 context.write(new Text(secondKey), key.datum());
          }
     }

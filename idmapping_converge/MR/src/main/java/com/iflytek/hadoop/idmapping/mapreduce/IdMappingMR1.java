@@ -34,10 +34,11 @@ public class IdMappingMR1 {
 	        		String idValue = entry.getKey();
 					context.write(new Text(idValue), key.datum());
 	        	}
-            }else{
-				// 如果ID为空，则标识保证不参与计算，并增加随机值保证负载平衡
-				context.write(new Text(IdMappingUtil.Random + "_" + IdMappingUtil.getRandomString(context.getTaskAttemptID().toString(),context.getNumReduceTasks())), key.datum());
             }
+//			else{
+//				// 如果ID为空，则标识保证不参与计算，并增加随机值保证负载平衡
+//				context.write(new Text(IdMappingUtil.Random + "_" + IdMappingUtil.getRandomString(context.getTaskAttemptID().toString(),context.getNumReduceTasks())), key.datum());
+//            }
          }
     }
 	/* idmapping step I reduce class
@@ -48,13 +49,13 @@ public class IdMappingMR1 {
 		@Override
 		public void reduce(Text key,Iterable<IDs> values,Context context)
                    throws IOException,InterruptedException{
-	     	// 1. 判断ID是否为空值，即key是否以ID类型+'_'开头，如果是直接输出
-			if(key.toString().startsWith(IdMappingUtil.Random + "_")){
-				for(IDs ids: values){
-	                   context.write(NullWritable.get(), ids);
-				}
-				return;
-	     	}
+//	     	// 1. 判断ID是否为空值，即key是否以ID类型+'_'开头，如果是直接输出
+//			if(key.toString().startsWith(IdMappingUtil.Random + "_")){
+//				for(IDs ids: values){
+//	                   context.write(NullWritable.get(), ids);
+//				}
+//				return;
+//	     	}
 			// 2. 聚合数据
 			IDs tempIDs = new IDs();
 			IdMappingUtil.initIDs(tempIDs);
