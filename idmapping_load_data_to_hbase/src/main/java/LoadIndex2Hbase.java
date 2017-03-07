@@ -23,6 +23,9 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by chentao on 16/6/24.
@@ -44,9 +47,15 @@ public class LoadIndex2Hbase implements Tool {
         byte[] qualifier = Bytes.toBytes("value");
         byte[] rowKey = null;
         byte[] hValue = null;
+        MessageDigest md = null;
+
+        public LoadIndex2HbaseMapper() throws NoSuchAlgorithmException {
+            md = MessageDigest.getInstance("MD5");
+        }
 
         protected void map(AvroKey<Index> key, NullWritable value, Context context) throws IOException, InterruptedException {
-            String id = key.datum().getId();
+            md.update(key.datum().getId().toUpperCase().getBytes());
+            String id = new BigInteger(1, md.digest()).toString(16).toUpperCase();
             String globalID = key.datum().getGlobalId();
             rowKey = Bytes.toBytes(id);
             ImmutableBytesWritable rowKeyWritable=new ImmutableBytesWritable(rowKey);

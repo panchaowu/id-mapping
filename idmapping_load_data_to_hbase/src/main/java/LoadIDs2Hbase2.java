@@ -41,11 +41,12 @@ public class LoadIDs2Hbase2 implements Tool {
 
     public static class LoadIDs2HbaseMapper extends Mapper<AvroKey<IDs>, NullWritable, ImmutableBytesWritable, Put> {
         private byte[] familyIds = Bytes.toBytes("ids");
-        private byte[] qualifier=Bytes.toBytes("value");
+        private byte[] qualifier = Bytes.toBytes("value");
         private byte[] rowKey = null;
         private byte[] hValue = null;
 
         protected void map(AvroKey<IDs> key, NullWritable value, Context context) throws IOException, InterruptedException {
+
             String global_id = key.datum().getGlobalId();
             String ids = key.datum().toString();
             rowKey = Bytes.toBytes(global_id);

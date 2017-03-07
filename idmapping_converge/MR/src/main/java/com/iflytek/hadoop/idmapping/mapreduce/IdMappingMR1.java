@@ -21,7 +21,7 @@ public class IdMappingMR1 {
     public static class IdMappingM1 extends Mapper<AvroKey<IDs>,NullWritable,Text,IDs> {
 		@Override
 		public void map(AvroKey<IDs> key,NullWritable value,Context context) throws IOException,InterruptedException {
-            Map<String,Integer> ids = IdMappingUtil.getMapByIdType(key.datum() , "all");
+			Map<String,Integer> ids = IdMappingUtil.getMapByIdType(key.datum().toLowCase() , "all");
             // 初始化global_id为空
             key.datum().setGlobalId("");
             if( ids!= null && ids.size() != 0){

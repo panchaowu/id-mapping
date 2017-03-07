@@ -12,6 +12,7 @@ import org.apache.hadoop.io.Writable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.*;
 
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
@@ -306,14 +307,14 @@ public Object get(int field$) {
   }
 
   @Override
-public void write(DataOutput dataOutput) throws IOException {
+  public void write(DataOutput dataOutput) throws IOException {
     byte[] bytes = this.toString().getBytes();
     dataOutput.writeInt(bytes.length);
     dataOutput.write(bytes, 0, bytes.length);
   }
 
   @Override
-public void readFields(DataInput dataInput) throws IOException {
+  public void readFields(DataInput dataInput) throws IOException {
     int length = dataInput.readInt();
     byte[] bytes = new byte[length];
     dataInput.readFully(bytes, 0, length);
@@ -328,6 +329,34 @@ public void readFields(DataInput dataInput) throws IOException {
     this.setImsi(id.getImsi());
     this.setDid(id.getDid());
     this.setAndroidId(id.getAndroidId());
+  }
+
+  // 将ID都变成小写，并返回自身
+  public IDs toLowCase(){
+    String temp = "";
+    List<Map<String,Integer>> list = new ArrayList<>();
+    list.add(Imei);
+    list.add(Mac);
+    list.add(Imsi);
+    list.add(Phone_Number);
+    list.add(Idfa);
+    list.add(Openudid);
+    list.add(Uid);
+    list.add(Did);
+    list.add(Android_Id);
+    Set<String> idSet;
+    for (Map<String,Integer> id : list) {
+      idSet = new HashSet<>();
+      idSet.addAll(id.keySet());
+      for (String s : idSet) {
+        temp = s.toLowerCase();
+        if (!temp.equals(s)) {
+          id.put(temp, id.get(s));
+          id.remove(s);
+        }
+      }
+    }
+    return this;
   }
 
   /**

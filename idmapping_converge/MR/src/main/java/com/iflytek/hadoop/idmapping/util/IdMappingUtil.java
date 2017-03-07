@@ -11,7 +11,7 @@ import java.util.Random;
 public class IdMappingUtil {
 	public static Random random = null;
 	public static String Random = "Random";
-	private static final int ACTIVITY_LIMIT = 60;
+	private static final int ACTIVITY_LIMIT = 100;
 
 	public synchronized static String getRandomString(String taskId, int taskNum) {
 		if (random == null) {
@@ -90,6 +90,7 @@ public class IdMappingUtil {
 			for ( Map.Entry<String, Integer> id :mapIn.entrySet()) {
 				idKey = id.getKey();
 				idValue = id.getValue();
+				// 如果acitivity > ACTIVITY_LIMIT，就丢弃这个ID
 				if (idValue > ACTIVITY_LIMIT) {
 					continue;
 				}

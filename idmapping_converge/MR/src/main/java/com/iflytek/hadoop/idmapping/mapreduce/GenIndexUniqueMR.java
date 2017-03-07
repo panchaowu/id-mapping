@@ -32,9 +32,9 @@ public class GenIndexUniqueMR {
         protected void map(AvroKey<IDs> key, NullWritable value, Context context) throws IOException, InterruptedException {
             Set<String> set;
             String gid = key.datum().getGlobalId();
-            write(gid, key.datum().getDid().keySet(),"did", context);
+//            write(gid, key.datum().getDid().keySet(),"did", context);
             write(gid, key.datum().getImei().keySet(), "imei", context);
-            write(gid, key.datum().getUid().keySet(), "uid", context);
+//            write(gid, key.datum().getUid().keySet(), "uid", context);
             write(gid, key.datum().getPhoneNumber().keySet(),"phone_number",context);
             write(gid, key.datum().getOpenudid().keySet(),"openudid",context);
             write(gid, key.datum().getImsi().keySet(),"imsi",context);
