@@ -20,12 +20,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by chentao on 16/6/24.
@@ -47,15 +43,9 @@ public class LoadIndex2Hbase implements Tool {
         byte[] qualifier = Bytes.toBytes("value");
         byte[] rowKey = null;
         byte[] hValue = null;
-        MessageDigest md = null;
-
-        public LoadIndex2HbaseMapper() throws NoSuchAlgorithmException {
-            md = MessageDigest.getInstance("MD5");
-        }
 
         protected void map(AvroKey<Index> key, NullWritable value, Context context) throws IOException, InterruptedException {
-            md.update(key.datum().getId().toUpperCase().getBytes());
-            String id = new BigInteger(1, md.digest()).toString(16).toUpperCase();
+            String id = EncodeUtil.dvcToMd5(key.datum().getId().toUpperCase());
             String globalID = key.datum().getGlobalId();
             rowKey = Bytes.toBytes(id);
             ImmutableBytesWritable rowKeyWritable=new ImmutableBytesWritable(rowKey);
@@ -102,11 +92,12 @@ public class LoadIndex2Hbase implements Tool {
         hbaseConfiguration.set("mapreduce.job.queuename", "dmp");
         hbaseConfiguration.set("mapreduce.job.name", "idmapping-bulkload-index" + strings[1]);
         hbaseConfiguration.set("hbase.zookeeper.quorum", zkPath);
+        hbaseConfiguration.set("hbase.mapreduce.bulkload.max.hfiles.perRegion.perFamily", "10000");
         HBaseAdmin admin = new HBaseAdmin(hbaseConfiguration);
         HTableDescriptor td = admin.getTableDescriptor(Bytes.toBytes(zkIndexName));
         admin.disableTable(zkIndexName);
         admin.deleteTable(zkIndexName);
-        byte[][] splits = LoadIDs2Hbase2.getHexSplits("100000000000000000", "ffffffffffffffffffff", 800);
+        byte[][] splits = LoadIDs2Hbase2.getHexSplits("000000000000000000", "ffffffffffffffffffff", 3751);
         admin.createTable(td, splits);
         HTable table = new HTable(hbaseConfiguration, zkIndexName);
 //        Connection connection = ConnectionFactory.createConnection(hbaseConfiguration);
@@ -114,6 +105,8 @@ public class LoadIndex2Hbase implements Tool {
         HFileOutputFormat2.configureIncrementalLoad(job, table, table);
         int exitCode = job.waitForCompletion(true) == true ? 0 : 1;
         if (exitCode == 0) {
+            System.out.print("========================================================");
+            System.out.print("Do bulk load to hbase");
             LoadIncrementalHFiles loadFfiles = new LoadIncrementalHFiles(hbaseConfiguration);
             loadFfiles.doBulkLoad(new Path(strings[2]), table);//导入数据
             System.out.println("Bulk Load Completed..");
@@ -124,7 +117,9 @@ public class LoadIndex2Hbase implements Tool {
     }
 
     public static void main(String[] args) throws Exception {
-        int exitCode = ToolRunner.run(new LoadIndex2Hbase(), args);
-        System.exit(exitCode);
+//        int exitCode = ToolRunner.run(new LoadIndex2Hbase(), args);
+//        System.exit(exitCode);
+        System.out.print(EncodeUtil.dvcToMd5("18298014175"));
+
     }
 }

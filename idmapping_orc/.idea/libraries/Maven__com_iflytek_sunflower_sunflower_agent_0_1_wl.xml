@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.iflytek.sunflower:sunflower-agent:0.1-wl">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/iflytek/sunflower/sunflower-agent/0.1-wl/sunflower-agent-0.1-wl.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/iflytek/sunflower/sunflower-agent/0.1-wl/sunflower-agent-0.1-wl-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/iflytek/sunflower/sunflower-agent/0.1-wl/sunflower-agent-0.1-wl-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

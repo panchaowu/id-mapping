@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.iflytek.sunflower:sunflower-share:0.3.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/iflytek/sunflower/sunflower-share/0.3.0-SNAPSHOT/sunflower-share-0.3.0-20170425.081649-19.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/iflytek/sunflower/sunflower-share/0.3.0-SNAPSHOT/sunflower-share-0.3.0-20170425.081649-19-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/iflytek/sunflower/sunflower-share/0.3.0-SNAPSHOT/sunflower-share-0.3.0-20170425.081649-19-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

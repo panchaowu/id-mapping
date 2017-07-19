@@ -13,27 +13,27 @@ public class UDFIncreaseActivity extends UDF {
             if (tmp.getKey().toUpperCase().equals("EMPTY") || tmp.getKey().length() == 0) {
                 continue;
             }
-            if ((tmp.getValue() & 0xff) >= 254) {
-                // continue; //continue将删除这个ID
-                mapResult.put(tmp.getKey(), tmp.getValue());
+            if ((tmp.getValue() & 0xff) >= 100) {
+                 continue; //continue将删除这个ID
+//                mapResult.put(tmp.getKey().toLowerCase(), tmp.getValue());
             } else {
-                mapResult.put(tmp.getKey(), tmp.getValue() + 1);
+                mapResult.put(tmp.getKey().toLowerCase(), tmp.getValue() + 1);
             }
         }
         return mapResult;
     }
 
-    public Map<String, Integer> evaluate(Map<String, Integer> map, int toLowCase) {
+    public Map<String, Integer> evaluate(Map<String, Integer> map, int activity) {
         Map<String, Integer> mapResult = new HashMap<String, Integer>();
         for(Map.Entry<String, Integer> tmp : map.entrySet()) {
             if (tmp.getKey().toUpperCase().equals("EMPTY") || tmp.getKey().length() == 0) {
                 continue;
             }
-            if ((tmp.getValue() & 0xff) >= 254) {
-                // continue; //continue将删除这个ID
-                mapResult.put(tmp.getKey().toLowerCase(), tmp.getValue());
+            if ((tmp.getValue() & 0xff) >= 100) {
+                 continue; //continue将删除这个ID
+//                mapResult.put(tmp.getKey().toLowerCase(), tmp.getValue());
             } else {
-                mapResult.put(tmp.getKey().toLowerCase(), tmp.getValue() + 1);
+                mapResult.put(tmp.getKey().toLowerCase(), tmp.getValue() + activity);
             }
         }
         return mapResult;

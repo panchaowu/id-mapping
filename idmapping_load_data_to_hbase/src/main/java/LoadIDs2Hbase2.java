@@ -22,6 +22,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
 /**
@@ -105,11 +106,12 @@ public class LoadIDs2Hbase2 implements Tool {
         hbaseConfiguration.set("mapreduce.job.queuename", "dmp");
         hbaseConfiguration.set("mapreduce.job.name", "idmapping-bulkload-ids" + strings[1]);
         hbaseConfiguration.set("hbase.zookeeper.quorum", zkPath);
+        hbaseConfiguration.set("hbase.mapreduce.bulkload.max.hfiles.perRegion.perFamily", "1000");
         HBaseAdmin admin = new HBaseAdmin(hbaseConfiguration);
         HTableDescriptor td = admin.getTableDescriptor(Bytes.toBytes(zkTableName));
         admin.disableTable(zkTableName);
         admin.deleteTable(zkTableName);
-        byte[][] splits = getHexSplits("100000000000000000", "ffffffffffffffffffff", 700);
+        byte[][] splits = getHexSplits("000000000000000000", "ffffffffffffffffffff", 3411);
         admin.createTable(td, splits);
         HTable table = new HTable(hbaseConfiguration, zkTableName);
 //        Connection connection = ConnectionFactory.createConnection(hbaseConfiguration);
@@ -124,5 +126,13 @@ public class LoadIDs2Hbase2 implements Tool {
 //        connectWatcher.setData(zkIdsPath, zkTableName);
         connectWatcher.close();
         return  exitCode;
+    }
+
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        byte[][] splits = getHexSplits("0000", "FFFF", 10);
+        for (byte[] split : splits) {
+            String srt2 = new String(split, "UTF-8");
+            System.out.println(srt2);
+        }
     }
 }

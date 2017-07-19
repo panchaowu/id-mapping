@@ -12,6 +12,7 @@ import org.apache.hadoop.io.Writable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.HashMap;
 
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
@@ -36,7 +37,17 @@ public class IDs extends org.apache.avro.specific.SpecificRecordBase implements 
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public IDs() {}
+  public IDs() {
+    Imei = new HashMap<String, Integer>();
+    Mac = new HashMap<String, Integer>();;
+    Imsi = new HashMap<String, Integer>();;
+    Phone_Number = new HashMap<String, Integer>();;
+    Idfa = new HashMap<String, Integer>();;
+    Openudid = new HashMap<String, Integer>();;
+    Uid = new HashMap<String, Integer>();;
+    Did = new HashMap<String, Integer>();;
+    Android_Id = new HashMap<String, Integer>();;
+  }
 
   @Override
   protected Object clone() throws CloneNotSupportedException {
