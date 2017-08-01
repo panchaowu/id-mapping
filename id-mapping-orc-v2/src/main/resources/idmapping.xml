@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+
+    <property>
+        <name>id.type.list</name>
+        <value>imei,mac,imsi,idfa,openudid,phone_number,android_id</value>
+        <description>逗号分隔，id类型列表</description>
+    </property>
+
+    <property>
+        <name>id.src.list</name>
+        <value>vcoam,sdk,vc_up,mi_data,py_yun,cmcc,lingxi,ad</value>
+        <description>数据源列表，不在列表将会过滤对应的id</description>
+    </property>
+
+    <property>
+        <name>id.blacklist.hdfs.path</name>
+        <value>hdfs://ns-hf/project/idmapping/idmapping/blacklist/</value>
+        <description>黑名单的hdfs路径</description>
+    </property>
+
+    <property>
+        <name>id.clean.src.writelist</name>
+        <value>cmcc,vc_up</value>
+        <description>数据源在白名单里的ID不会因为过期而被过滤</description>
+    </property>
+
+    <property>
+        <name>id.max.converge.count</name>
+        <value>3</value>
+        <description>当一个id和多少id配对时，过滤该id</description>
+    </property>
+
+</configuration>
+
+
