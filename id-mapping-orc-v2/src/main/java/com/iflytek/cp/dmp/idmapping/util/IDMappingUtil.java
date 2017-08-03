@@ -130,8 +130,24 @@ public class IDMappingUtil {
             for(Map.Entry<String, IDs.Info> entrySet : sTmpMap.entrySet()) {
                 idKey = entrySet.getKey();
                 idInfo = entrySet.getValue();
-                // 如果目标IDs不存在,则加入，否则更新datetime
-                if(!dTmpMap.containsKey(idKey) || dTmpMap.get(idKey).datetime < idInfo.datetime) {
+                // 如果目标IDs不存在,则加入
+                if (!dTmpMap.containsKey(idKey) ) {
+                    dTmpMap.put(idKey, idInfo);
+                } else {
+                    // 更新时间
+                    if (dTmpMap.get(idKey).datetime < idInfo.datetime) {
+                        dTmpMap.get(idKey).datetime = idInfo.datetime;
+                        dTmpMap.get(idKey).model = idInfo.model;
+                    }
+                    // 更新src
+                    StringBuffer src = new StringBuffer();
+                    Set<String> srcSet = new HashSet<String>(Arrays.asList(dTmpMap.get(idKey).src.split(",")));
+                    srcSet.addAll(Arrays.asList(idInfo.src.split(",")));
+                    for(String tmp : srcSet) {
+                        src.append(tmp);
+                        src.append(",");
+                    }
+                    idInfo.src = src.substring(0, src.length()-1);
                     dTmpMap.put(idKey, idInfo);
                 }
             }
