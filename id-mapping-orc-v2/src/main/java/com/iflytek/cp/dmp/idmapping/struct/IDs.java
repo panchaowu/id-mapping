@@ -74,7 +74,11 @@ public class IDs {
             OrcMap<Text, OrcStruct> idlist = orcIDs.get(new Text(type));
             Map<String, Info> resIDs = new HashMap<String, Info>();
             // 处理ID列表
-            for (Object tmpKey : idlist.keySet()) {
+            for (Text tmpKey : idlist.keySet()) {
+                // 去除id为空字符串的id ""
+                if(tmpKey.toString().equals("")) {
+                    continue;
+                }
                 OrcStruct value = idlist.get(tmpKey);
                 StringBuffer resTxt = new StringBuffer();
                 Set<String> resSrc = new HashSet<String>();    // 使用set是为了去重

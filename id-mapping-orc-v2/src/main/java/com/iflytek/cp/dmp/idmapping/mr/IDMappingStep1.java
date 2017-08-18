@@ -77,30 +77,25 @@ public class IDMappingStep1  implements Tool {
         private List<String> antispamIDList = new ArrayList<String>();
 
         protected void reduce(Text key, Iterable<OrcValue> values, Context context) throws IOException, InterruptedException {
+
+            IDs newIDs = new IDs();
+            Set<String> secondKeys = new TreeSet<String>();
             // 转化为IDs结构，方便处理
-            List<IDs> idss = new ArrayList<IDs>();
+            boolean isOverCapacity = false;
             for (OrcValue orcValue: values) {
                 IDs ids = new IDs();
                 OrcStruct orcStruct = (OrcStruct) orcValue.value;
-                idss.add(ids.fromOrcStruct(orcStruct, false));
-            }
-            IDs newIDs = new IDs();
-
-            // SecondKeys是用来输出用的，10条数据聚合后还能输出10条数据
-            Set<String> secondKeys = new TreeSet<String>();
-            boolean isOverCapacity = false;
-            // 聚合数据，超过10个不做聚合，为了保证不丢数据，原始数据也会输出
-            // 不保存，目的是处理异常情况，解决oom问题
-            for (IDs ids : idss) {
-                context.write(NullWritable.get(), ids.toOrcStruct());
+                ids.fromOrcStruct(orcStruct,false);
                 if (!isOverCapacity) {
                     String tmpGlobalID = ids.globalID;
                     // 加入secondKeys用来作为输出
                     secondKeys.add(tmpGlobalID);
+                    // 聚合数据，超过10个不做聚合,直接丢弃
                     // 如果超出容量，isOverCapacity设置为true
                     if(IDMappingUtil.convergeID(newIDs, ids, true)) {
                         isOverCapacity = true;
                         antispamIDList.add(key.toString());
+                        break;
                     }
                 }
             }
@@ -110,6 +105,29 @@ public class IDMappingStep1  implements Tool {
                     context.write(NullWritable.get(), newIDs.toOrcStruct());
                 }
             }
+//            // SecondKeys是用来输出用的，10条数据聚合后还能输出10条数据
+//
+//            // 聚合数据，超过10个不做聚合，为了保证不丢数据，原始数据也会输出
+//            // 不保存，目的是处理异常情况，解决oom问题
+//            for (IDs ids : idss) {
+//                context.write(NullWritable.get(), ids.toOrcStruct());
+//                if (!isOverCapacity) {
+//                    String tmpGlobalID = ids.globalID;
+//                    // 加入secondKeys用来作为输出
+//                    secondKeys.add(tmpGlobalID);
+//                    // 如果超出容量，isOverCapacity设置为true
+//                    if(IDMappingUtil.convergeID(newIDs, ids, true)) {
+//                        isOverCapacity = true;
+//                        antispamIDList.add(key.toString());
+//                    }
+//                }
+//            }
+//            if (!isOverCapacity) {
+//                for (String secondKey : secondKeys) {
+//                    newIDs.globalID = secondKey;
+//                    context.write(NullWritable.get(), newIDs.toOrcStruct());
+//                }
+//            }
         }
 
         /* 将作弊ID写入到反作弊目录里 */
@@ -148,13 +166,17 @@ public class IDMappingStep1  implements Tool {
             fs.delete(outputPath, true);//如果输出路径存在，就将其删除
         }
 
-        Configuration conf = new Configuration();
-        conf.set("mapreduce.job.queuename", "dmp");
+       // Configuration conf = new Configuration();
+       // conf.set("mapreduce.job.queuename", "dmp");
         conf.set("mapreduce.job.name", "idmappingStep1");
         conf.set("orc.mapred.map.output.key.schema","struct<global_id:string,ids:map<string,map<string,struct<src:string,datetime:int,model:string>>>>");
         conf.set("orc.mapred.map.output.value.schema","struct<global_id:string,ids:map<string,map<string,struct<src:string,datetime:int,model:string>>>>");
         conf.set("orc.mapred.output.schema", "struct<global_id:string,ids:map<string,map<string,struct<src:string,datetime:int,model:string>>>>");
         conf.set("idmapping.clean.date", cleanDate);
+        conf.setLong("mapreduce.map.memory.mb",9216);
+        conf.setLong("mapreduce.reduce.memory.mb",9216);
+        conf.set("mapreduce.map.java.opts","-Xmx9216m");
+        conf.set("mapreduce.reduce.java.opts","-Xmx9216m");
 
         // 删除反作弊列表目录的数据
         String antiPathString = conf.get("id.blacklist.hdfs.path","hdfs://ns-hf/project/idmapping/idmapping/blacklist/");
@@ -181,8 +203,8 @@ public class IDMappingStep1  implements Tool {
         job.setOutputFormatClass(OrcOutputFormat.class);
         job.setMapperClass(Step1M.class);
         job.setReducerClass(Step1R.class);
-//        job.setNumReduceTasks(900);
-        job.setNumReduceTasks(1);
+        job.setNumReduceTasks(500);
+//        job.setNumReduceTasks(1);
         job.waitForCompletion(true);
         return 0;
     }

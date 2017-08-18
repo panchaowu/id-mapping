@@ -78,6 +78,9 @@ public class IDMappingUtil {
     * */
     public static void filterIDs(IDs ids, Set<String> antiList, Integer cleanDatetime) {
         boolean isDeleted;
+//        if(ids.ids.size() == 0) {
+//            return;
+//        }
         for (String type : validTypeSet) {
             Map<String, IDs.Info> idlist = ids.ids.get(type);
             List<String> idTmpList = new ArrayList<String>();

@@ -62,15 +62,11 @@ public class IDMappingStep3 implements Tool {
 
         protected void reduce(Text key, Iterable<OrcValue> values, Context context) throws IOException, InterruptedException {
             // 转化为IDs结构，方便处理
-            List<IDs> idss = new ArrayList<IDs>();
+            IDs newIDs = new IDs();
             for (OrcValue orcValue: values) {
                 IDs ids = new IDs();
                 OrcStruct orcStruct = (OrcStruct) orcValue.value;
-                idss.add(ids.fromOrcStruct(orcStruct, false));
-            }
-            IDs newIDs = new IDs();
-            // key相同，但其他字段不同
-            for (IDs ids : idss) {
+                ids.fromOrcStruct(orcStruct, false);
                 IDMappingUtil.convergeID(newIDs, ids, false);
             }
             // global_id 为md5的大写
@@ -95,13 +91,16 @@ public class IDMappingStep3 implements Tool {
             fs.delete(outputPath, true);//如果输出路径存在，就将其删除
         }
 
-        Configuration conf = new Configuration();
-        conf.set("mapreduce.job.queuename", "dmp");
+       // Configuration conf = new Configuration();
+        //conf.set("mapreduce.job.queuename", "dmp");
         conf.set("mapreduce.job.name", "idmappingStep3");
         conf.set("orc.mapred.map.output.key.schema","struct<global_id:string,ids:map<string,map<string,struct<src:string,datetime:int,model:string>>>>");
         conf.set("orc.mapred.map.output.value.schema","struct<global_id:string,ids:map<string,map<string,struct<src:string,datetime:int,model:string>>>>");
         conf.set("orc.mapred.output.schema", "struct<global_id:string,ids:map<string,map<string,struct<src:string,datetime:int,model:string>>>>");
-
+        conf.setLong("mapreduce.map.memory.mb",9216);
+        conf.setLong("mapreduce.reduce.memory.mb",9216);
+        conf.set("mapreduce.map.java.opts","-Xmx9216m");
+        conf.set("mapreduce.reduce.java.opts","-Xmx9216m");
         Job job = Job.getInstance(conf);
         // 输入输出路径
         FileInputFormat.addInputPath(job, new Path(input));
@@ -118,8 +117,8 @@ public class IDMappingStep3 implements Tool {
         job.setJarByClass(IDMappingStep3.class);
         job.setMapperClass(Step3M.class);
         job.setReducerClass(Step3R.class);
-//        job.setNumReduceTasks(300);
-        job.setNumReduceTasks(1);
+        job.setNumReduceTasks(500);
+//        job.setNumReduceTasks(1);
         job.waitForCompletion(true);
         return 0;
     }
