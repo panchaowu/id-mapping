@@ -13,7 +13,8 @@ import org.apache.zookeeper.Watcher;
 import java.io.IOException;
 
 /**
- * Created by admin on 2017/1/21.
+ * IDs 查询的模块.
+ * 包含初始化及基于globalId查询IDs字符串
  */
 public class IDsQuery {
     private static Logger logger = Logger.getLogger(IDsQuery.class);

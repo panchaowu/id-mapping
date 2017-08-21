@@ -48,10 +48,15 @@ public class IDMappingStep2 implements Tool {
     /* idmapping step II reduce class
     * */
     public static class Step2R extends Reducer<Text, OrcValue, NullWritable, OrcStruct> {
+        // 过滤的id集合
+        private Set<String> antispamIDs;
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException {
+            antispamIDs = IDMappingUtil.getAntispamIDs();
+        }
 
         // 合并相同gid下的其他id，并输出
         protected void reduce(Text key, Iterable<OrcValue> values, Context context) throws IOException, InterruptedException {
-            Set<String> antispamIDs = IDMappingUtil.getAntispamIDs();
             IDs newIDs = new IDs();
             for (OrcValue orcValue: values) {
                 IDs ids = new IDs();

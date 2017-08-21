@@ -12,6 +12,10 @@ import org.apache.zookeeper.Watcher;
 
 import java.io.IOException;
 
+/**
+ * Index 查询的模块.
+ * 包含初始化及基于dvcId(MD5编码)查询IDs字符串
+ */
 public class IndexQuery {
     private static Logger logger = Logger.getLogger(IndexQuery.class);
     private String indexPath;
