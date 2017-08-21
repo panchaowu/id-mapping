@@ -82,7 +82,14 @@ public class IDMappingStep1  implements Tool {
             Set<String> secondKeys = new TreeSet<String>();
             // 转化为IDs结构，方便处理
             boolean isOverCapacity = false;
+            int count = 0;
+            int print = 0;
             for (OrcValue orcValue: values) {
+                count++;
+                if(count > 100000000 && print == 0) {
+                    System.out.println("many values key :" + key.toString());
+                    print = 1;
+                }
                 IDs ids = new IDs();
                 OrcStruct orcStruct = (OrcStruct) orcValue.value;
                 ids.fromOrcStruct(orcStruct,false);
